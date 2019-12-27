@@ -1,0 +1,100 @@
+spring:
+  devtools:
+    restart:
+      enabled: true
+    livereload:
+      enabled: true
+  profiles:
+    active: dev
+  datasource:
+    #url: jdbc:mysql://192.168.0.88:3306/prize_db?useUnicode=true&characterEncoding=UTF-8&useSSL=false&autoReconnect=true&failOverReadOnly=false&serverTimezone=GMT%2b8
+    url: jdbc:mysql://rm-wz98yu902va7ai4s6ko.mysql.rds.aliyuncs.com:3306/prize_db?useUnicode=true&characterEncoding=UTF-8&useSSL=false&autoReconnect=true&failOverReadOnly=false&serverTimezone=GMT%2b8
+    driver-class-name: com.mysql.jdbc.Driver
+    #username: prize
+    username: prize_db
+    password: Prize@2019
+    type: com.zaxxer.hikari.HikariDataSource
+    hikari:
+      maximum-pool-size: 20
+      validation-timeout: 30000
+      connection-test-query: SELECT 1
+      minimum-idle: 5
+      connection-timeout: 30000
+      idle-timeout: 30000
+      auto-commit: true
+  jpa:
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+        type:
+          descriptor:
+            sql:
+              BasicBinder: trace
+  thymeleaf:
+    cache: false
+  servlet:
+    multipart:
+      max-file-size: 300MB
+      max-request-size: 300MB
+  jackson:
+    date-format: yyyy-MM-dd HH:mm:ss
+    time-zone: Asia/Shanghai
+server:
+  port: 8081
+oss:
+  endpoint: oss-cn-shenzhen.aliyuncs.com
+  accessKeyId: LTAI4FxdAbXCZ8UG3W46N9qS
+  accessKeySecret: i0oReZh4SKmbaCPKMMHTaJOywypTZA
+  accessUrl: http://img.ichenxing.cn/
+domain: ichenxing.cn
+---
+spring:
+  profiles: dev
+redis:
+  host: 192.168.0.88
+  port: 6379
+  auth: 9a1cfc2f6c7bdb64
+  store:
+    db: 0
+wx:
+  authUrl: http://mptest.natapp1.cc/view/login/wxAuth
+  homeworkUrl: http://mptest.natapp1.cc/view/scratch/player
+  productUrl: http://mptest.natapp1.cc/view/product/detail
+  evaluateUrl: http://localhost:8080/mp/template/send
+domain: localhost
+---
+spring:
+  profiles: test
+redis:
+  host: 192.168.0.88
+  port: 6379
+  auth: 9a1cfc2f6c7bdb64
+  store:
+    db: 0
+wx:
+  authUrl: http://mptest.natapp1.cc/view/login/wxAuth
+  homeworkUrl: http://mptest.natapp1.cc/view/scratch/player
+  productUrl: http://mptest.natapp1.cc/view/product/detail
+  evaluateUrl: https://wx.sweetbiancheng.com/mp/template/send
+domain: mptest.natapp1.cc
+---
+spring:
+  profiles: prod
+  datasource:
+    url: jdbc:mysql://tiantainquan-01:3306/sweet_biancheng?useUnicode=true&characterEncoding=UTF-8&useSSL=false&autoReconnect=true&failOverReadOnly=false&serverTimezone=GMT%2b8
+
+redis:
+  host: 127.0.0.1
+  port: 6379
+  auth: 9a1cfc2f6c7bdb64
+  store:
+    db: 0
+oss:
+  endpoint: oss-cn-shenzhen-internal.aliyuncs.com
+wx:
+  authUrl: https://wx.sweetbiancheng.com/view/login/wxAuth
+  homeworkUrl: https://wx.sweetbiancheng.com/view/scratch/player
+  productUrl: https://wx.sweetbiancheng.com/view/product/detail
+  evaluateUrl: https://wx.sweetbiancheng.com/mp/template/send
+domain: ichenxing.cn

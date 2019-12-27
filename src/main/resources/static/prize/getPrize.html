@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>抽奖有惊喜</title>
+    <meta name="description" content="iPhoneXS、索尼蓝牙耳机、话费红包等你来抽！">
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link rel="bookmark" href="/favicon.ico" />
+    <!-- build:css ../../css/gzh/getPrize.min.css -->
+    <link rel="stylesheet" href="../css/mask.css">
+    <link rel="stylesheet" href="../css/getPrize.css">
+    <!-- endbuild -->
+</head>
+
+<body>
+    <div id="getPrize" v-cloak>
+        <transition name="fade">
+            <div v-if="mask" class="mask">
+                <div v-cloak>
+                    {{maskText}}
+                </div>
+            </div>
+        </transition>
+        <!-- <header>
+            <div class="header-left">
+                <div class="header-left-arrow" @click="back"></div>
+            </div>
+            积分抽奖
+        </header> -->
+        <main>
+            <div class="hisDiv">
+                <img src="../images/my-gift-btn.png" @click="showPrizeHis">
+            </div>
+
+            <div class="header-png">
+                <img v-if="isWeixin" src="../images/wx-header.png" />
+                <img v-else src="../images/zfb-header.png" />
+            </div>
+
+            <div v-if="isWeixin" class="changes-wx-div">
+                <div style="font-size:0.75rem;color: #FFFFFF;margin:0 0 0 1.65rem;">你还有<span style="font-size: 1rem;color: #FFE009;">2</span>次抽奖机会</div>
+            </div>
+            <div v-else class="changes-zfb-div">
+                <div style="font-size:0.75rem; color: #664A08;margin:0 0 0 1.65rem;">你还有<span style="font-size: 1rem;color: #FF5546;">2</span>次抽奖机会</div>
+            </div>
+
+            <div id="imgBox"></div>
+            <div class="banner">
+                <img :src="val" style="display:none;" v-for="(val,index) in turnplate.prizeImg" :key="index" :id="'showImg'+index">
+                <!-- 抽奖的背景图需要替换地址 -->
+                <div v-if="isWeixin" class="turnplate" style="background-image:url(../images/weixin-zp-bg.png);background-size:100% 100%;">
+                    <canvas class="item" id="wheelcanvas" width="600px" height="600px" style="transform: rotate(0deg);"></canvas>
+                    <img class="pointer" src="../images/pointer.png" @click="getPrize">
+                </div>
+                <div v-else class="turnplate" style="background-image:url(../images/zfb-zp-bg.png);background-size:100% 100%;">
+                    <canvas class="item" id="wheelcanvas" width="600px" height="600px" style="transform: rotate(0deg);"></canvas>
+                    <img class="pointer" src="../images/pointer.png" @click="getPrize">
+                </div>
+            </div>
+        </main>
+
+        <div class="rule">
+            <div class="rule-header">
+                <img src="../images/split-line.png">
+                <span>
+                       活动规则
+                    </span>
+                <img src="../images/split-line.png">
+            </div>
+            <div class="rule-content">
+                <p></p>
+            </div>
+        </div>
+        <!-- 点击获得更多积分弹窗 -->
+
+        <!-- 签到页面
+        <div class="isMoreIntePage" v-show="showDrawBox" v-cloak @click="showDrawBox = false">
+            <div class="drawBox" @click.stop>
+                <div class="top">
+                    <img src="../images/wireframe-kuk-uv-1-3.png" alt="bgRound" class="bgRound">
+
+                    <img :src="'../images/'+(val>0?key+'-day-kuk-uv-1-3.png':key+'-days-kuk-uv-1-3.png')" :alt="'day'+key"
+                        :class="(index>3?'lastDays':'days')" v-for="(val,key,index) in userCreditsMsg.signinRecord"
+                        :key="index" :style="val>0?'marginTop:-6px':''">
+                </div>
+                <div class="middle" id="middle">
+
+                </div>
+                <p class="allInte" v-cloak>总积分：{{userCreditsMsg.credits}}</p>
+            </div>
+        </div>
+        -->
+        <!-- 获奖记录显示窗口 -->
+        <div class="isMoreIntePage" v-show="showHisBox" v-cloak @click="showHisBox = false">
+            <div class="hisBox" @click.stop>
+                <div class="top">
+                    <img src="../images/award-winning-record.png" alt="">
+                </div>
+                <div class="tableContent">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>奖励内容</th>
+                                <th>获奖时间</th>
+                                <th>发放时间</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr v-for="val in prizeThings">
+                                <th v-cloak>{{val.prizeName}}</th>
+                                <td v-cloak>{{val.createTime}}</td>
+                                <td v-cloak>{{val.updateTime}}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <!-- 普通中奖（积分）弹窗 -->
+        <div class="isMoreIntePage" v-show="showNormalPrize" v-cloak>
+            <div id="winPop" class="entityBox showNormal" style="padding-bottom: 2rem;">
+                <!-- 中了实物，需要填写信息 -->
+                <div class="entityContent">
+                    <img :src="goods.goodsPic" style="width: 100%;height: auto;">
+                </div>
+                <div class="queryBtn" @click="goToWardPage">
+                    <img src="../images/query_jp.png" style="width: 14rem;">
+                </div>
+                <img src="../images/close.png" alt="close" class="closeImg" @click="showNormalPrize = false">
+            </div>
+        </div>
+    </div>
+</body>
+<!-- <script src="../js/vue.min.js"></script> -->
+<script src="../js/vue.min.js"></script>
+<!-- build:js ../../js/gzh/jquery-1.10.2.min.js -->
+<script type="text/javascript" src="../js/jquery-1.10.2.js"></script>
+<!-- endbuild -->
+<!-- build:js ../../js/gzh/awardRotate.min.js -->
+<script type="text/javascript" src="../js/awardRotate.js"></script>
+<!-- endbuild -->
+<!-- build:js ../../js/config.min.js -->
+<script type="text/javascript" src="../js/config.js"></script>
+<!-- endbuild -->
+<!-- build:js ../../js/gzh/getPrize-vue.min.js -->
+<script type="text/javascript" src="../js/getPrize-vue.js"></script>
+<!-- endbuild -->
+
+</html>
