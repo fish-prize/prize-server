@@ -47,14 +47,18 @@ oss:
   accessKeyId: LTAI4FxdAbXCZ8UG3W46N9qS
   accessKeySecret: i0oReZh4SKmbaCPKMMHTaJOywypTZA
   accessUrl: http://img.ichenxing.cn/
-domain: ichenxing.cn
+cookiesDomain: localhost
+prizeAccessDomain: localhost
+prizeMngDomain: localhost
 ---
 spring:
   profiles: dev
 redis:
-  host: 192.168.0.88
+  #host: 192.168.0.88
   port: 6379
-  auth: 9a1cfc2f6c7bdb64
+  #auth: 9a1cfc2f6c7bdb64
+  auth:
+  host: localhost
   store:
     db: 0
 wx:
@@ -63,6 +67,7 @@ wx:
   productUrl: http://mptest.natapp1.cc/view/product/detail
   evaluateUrl: http://localhost:8080/mp/template/send
 domain: localhost
+prizeAccessDomain: localhost:8081
 ---
 spring:
   profiles: test
@@ -78,23 +83,20 @@ wx:
   productUrl: http://mptest.natapp1.cc/view/product/detail
   evaluateUrl: https://wx.sweetbiancheng.com/mp/template/send
 domain: mptest.natapp1.cc
+prizeAccessDomain: mptest.natapp1.cc
 ---
 spring:
   profiles: prod
   datasource:
-    url: jdbc:mysql://tiantainquan-01:3306/sweet_biancheng?useUnicode=true&characterEncoding=UTF-8&useSSL=false&autoReconnect=true&failOverReadOnly=false&serverTimezone=GMT%2b8
-
+    url: jdbc:mysql://rm-wz98yu902va7ai4s6.mysql.rds.aliyuncs.com:3306/prize_db?useUnicode=true&characterEncoding=UTF-8&useSSL=false&autoReconnect=true&failOverReadOnly=false&serverTimezone=GMT%2b8
 redis:
-  host: 127.0.0.1
+  host: r-wz9to6kg25kto65dnx130.redis.rds.aliyuncs.com
   port: 6379
-  auth: 9a1cfc2f6c7bdb64
+  auth: Redi!2019%ICX=2020
   store:
-    db: 0
+    db: 2
 oss:
   endpoint: oss-cn-shenzhen-internal.aliyuncs.com
-wx:
-  authUrl: https://wx.sweetbiancheng.com/view/login/wxAuth
-  homeworkUrl: https://wx.sweetbiancheng.com/view/scratch/player
-  productUrl: https://wx.sweetbiancheng.com/view/product/detail
-  evaluateUrl: https://wx.sweetbiancheng.com/mp/template/send
-domain: ichenxing.cn
+cookiesDomain: ichenxing.cn
+prizeAccessDomain: prize.ichenxing.cn
+prizeMngDomain: prizemng.ichenxing.cn

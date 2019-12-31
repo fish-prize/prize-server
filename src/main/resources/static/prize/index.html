@@ -12,11 +12,12 @@
     <!-- build:css ../../css/gzh/getPrize.min.css -->
     <link rel="stylesheet" href="../css/mask.css">
     <link rel="stylesheet" href="../css/getPrize.css">
+    <link rel="stylesheet" href="../css/animate.min.css">
     <!-- endbuild -->
 </head>
 
 <body>
-    <div id="getPrize" v-cloak>
+    <div id="getPrize" v-cloak class="">
         <transition name="fade">
             <div v-if="mask" class="mask">
                 <div v-cloak>
@@ -32,7 +33,7 @@
         </header> -->
         <main>
             <div class="hisDiv">
-                <img src="../images/my-gift-btn.png" @click="showPrizeHis">
+                <img src="../images/my-gift-btn.png" @click="getUserPrize">
             </div>
 
             <div class="header-png">
@@ -40,11 +41,11 @@
                 <img v-else src="../images/zfb-header.png" />
             </div>
 
-            <div v-if="isWeixin" class="changes-wx-div">
-                <div style="font-size:0.75rem;color: #FFFFFF;margin:0 0 0 1.65rem;">你还有<span style="font-size: 1rem;color: #FFE009;">2</span>次抽奖机会</div>
+            <div v-if="isWeixin" class="changes-wx-div" v-cloak>
+                <div style="font-size:0.75rem;color: #FFFFFF;margin:0 0 0 1.65rem;">你还有<span style="font-size: 1rem;color: #FFE009;">{{count}}</span>次抽奖机会</div>
             </div>
-            <div v-else class="changes-zfb-div">
-                <div style="font-size:0.75rem; color: #664A08;margin:0 0 0 1.65rem;">你还有<span style="font-size: 1rem;color: #FF5546;">2</span>次抽奖机会</div>
+            <div v-else class="changes-zfb-div" v-cloak>
+                <div style="font-size:0.75rem; color: #664A08;margin:0 0 0 1.65rem;">你还有<span style="font-size: 1rem;color: #FF5546;">{{count}}</span>次抽奖机会</div>
             </div>
 
             <div id="imgBox"></div>
@@ -71,7 +72,7 @@
                 <img src="../images/split-line.png">
             </div>
             <div class="rule-content">
-                <p></p>
+                <div class="content" v-html="prizeActivityInfo.rules"></div>
             </div>
         </div>
         <!-- 点击获得更多积分弹窗 -->
@@ -94,39 +95,51 @@
         </div>
         -->
         <!-- 获奖记录显示窗口 -->
-        <div class="isMoreIntePage" v-show="showHisBox" v-cloak @click="showHisBox = false">
-            <div class="hisBox" @click.stop>
+        <div class="isMoreIntePage animated bounceInDown" v-show="showHisBox" v-cloak >
+            <div class="hisBox">
                 <div class="top">
-                    <img src="../images/award-winning-record.png" alt="">
+                    <span style="">我的奖品</span>
+                    <img style="width: 28px;height: auto" src="../images/close-black.png" @click="showHisBox = false">
                 </div>
-                <div class="tableContent">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>奖励内容</th>
-                                <th>获奖时间</th>
-                                <th>发放时间</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr v-for="val in prizeThings">
-                                <th v-cloak>{{val.prizeName}}</th>
-                                <td v-cloak>{{val.createTime}}</td>
-                                <td v-cloak>{{val.updateTime}}</td>
-                            </tr>
-                        </tbody>
-                    </table>
+                <div v-for="val in userPrizeList" class="tableContent">
+                    <block v-if="val.exipred">
+                        <div v-cloak class="hisItem">
+                            <div v-cloak><img style="width: 100px;height:auto;" :src="val.goodsPic" /></div>
+                            <div class="hisItemText">
+                                <div style="color: #262626; font-size: 18px;">{{val.goodsTitle}}</div>
+                                <div style="color: #262626; font-size: 16px;">{{val.exipreTime}}到期</div>
+                            </div>
+                            <div class="hisRight">
+                                <img v-if="val.exipred" style="width: 90px;height: auto;" src="../images/exipred.png" />
+                                <img v-else style="width: 14px;height: auto;" src="../images/right-icon.png" />
+                            </div>
+                        </div>
+                    </block>
+                    <a v-else :href="val.targetUrl">
+                        <div v-cloak class="hisItem">
+                            <div v-cloak><img style="width: 100px;height:auto;" :src="val.goodsPic" /></div>
+                            <div class="hisItemText">
+                                <div style="color: #262626; font-size: 16px;">{{val.goodsTitle}}</div>
+                                <div style="color: #262626; font-size: 14px;">{{val.exipreTime}}到期</div>
+                            </div>
+                            <div class="hisRight">
+                                <img v-if="val.exipred" style="width: 90px;height: auto;" src="../images/exipred.png" />
+                                <img v-else style="width: 14px;height: auto;" src="../images/right-icon.png" />
+                            </div>
+                        </div>
+                    </a>
                 </div>
             </div>
         </div>
         <!-- 普通中奖（积分）弹窗 -->
         <div class="isMoreIntePage" v-show="showNormalPrize" v-cloak>
-            <div id="winPop" class="entityBox showNormal" style="padding-bottom: 2rem;">
+            <div id="winPop" class="winBox showNormal animated bounceIn" style="padding-bottom: 2rem;">
                 <!-- 中了实物，需要填写信息 -->
-                <div class="entityContent">
-                    <img :src="goods.goodsPic" style="width: 100%;height: auto;">
+                <div class="entityContent1"  v-cloak>
+                    <img  v-if="storeNone==0" :src="goods.goodsPic" style="width: 100%;height: auto;" />
+                    <span  v-cloak v-if="storeNone==1" style="width: 100%;height: auto;font-size:14px;color:#f2f2f2;" >暂无库存，下次早点来吧</span>
                 </div>
-                <div class="queryBtn" @click="goToWardPage">
+                <div  v-cloak class="queryBtn" @click="goToWardPage">
                     <img src="../images/query_jp.png" style="width: 14rem;">
                 </div>
                 <img src="../images/close.png" alt="close" class="closeImg" @click="showNormalPrize = false">

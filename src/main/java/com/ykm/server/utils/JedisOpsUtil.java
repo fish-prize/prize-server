@@ -223,11 +223,11 @@ public class JedisOpsUtil {
 
         try {
 
-            if (StringUtils.isEmpty(value) && t.getName().equals("String")) {
+            if (StringUtils.isEmpty(value) && t.getName().equals("java.lang.String")) {
                 return gson.fromJson("", t);
             }
 
-            if (StringUtils.isEmpty(value) && !t.getName().equals("String")) {
+            if (StringUtils.isEmpty(value) && !t.getName().equals("java.lang.String")) {
                 return gson.fromJson("0", t);
             }
 
@@ -245,6 +245,61 @@ public class JedisOpsUtil {
         }
 
         return null;
+    }
+
+    public boolean lock(String preFix, String key, String value, int db){
+        Jedis jedis = null;
+        Long lockWaitTimeOut = 200L;
+        Long deadTimeLine = System.currentTimeMillis() + lockWaitTimeOut;
+        try {
+            jedis = JedisUtil.getJedis(db);
+            String realKey = preFix + key;
+
+            for (;;) {
+                if (jedis.setnx(realKey, value) == 1) {
+                    return true;
+                }
+                String currentValue = jedis.get(realKey);
+                // if lock is expired
+                if (!StringUtils.isEmpty(currentValue) &&
+                        Long.valueOf(currentValue) < System.currentTimeMillis()) {
+                    // gets last lock time
+                    String oldValue = jedis.getSet(realKey, value);
+                    if (!StringUtils.isEmpty(oldValue) && oldValue.equals(currentValue)) {
+                        return true;
+                    }
+                }
+                lockWaitTimeOut = deadTimeLine - System.currentTimeMillis();
+                if (lockWaitTimeOut <= 0L) {
+                    return false;
+                }
+            }
+
+        } finally {
+            if (null != jedis) {
+                jedis.close();
+            }
+        }
+    }
+
+    public void unlock(String prefix, String key, String value, int db) {
+        Jedis jedis = null;
+        try {
+            jedis = JedisUtil.getJedis(db);
+            String realKey = prefix + key;
+            String currentValue = jedis.get(realKey);
+
+            if (!StringUtils.isEmpty(currentValue)
+                    && value.equals(currentValue)) {
+                jedis.del(realKey);
+            }
+        } catch (Exception ex) {
+            log.info("unlock error");
+        } finally {
+            if (null != jedis) {
+                jedis.close();
+            }
+        }
     }
 
     public static void main(String[] args){

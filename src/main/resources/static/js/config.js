@@ -2,19 +2,18 @@
  * Created by fish on 2018/4/3.
  */
 /**/
-var host = window.location.origin
+var host = window.location.origin.indexOf('http') == -1 ? 'http://localhost:8081' : window.location.origin;
 // 1.3版本接口
 var getPrizeList = host + '/prize/list'
-// 获取获奖历史
-var getPriHis = host + '/Prize/getPrizeRecord'
 // 抽奖
 var needPrize = host + '/prize/getPrize'
 // 跑马灯抽奖记录
 var getExpensivePrizeRecord = host + '/Prize/getExpensivePrizeRecord'
 // 提交实物奖信息
 var getGoods = host + '/prize/getGoods'
-// 获取用户积分信息
-var getUserCreditsMsg = host + '/Credits/getUserCreditsMsg'
+var getPrizeActivityInfo = host + '/prize/getPrizeActivityInfo';
+
+var getUserPrizeList = host + '/prize/getUserPrizeList'
 
 var width = window.innerWidth
 var height = window.innerHeight

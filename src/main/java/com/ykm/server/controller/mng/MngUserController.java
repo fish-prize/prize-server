@@ -49,10 +49,13 @@ public class MngUserController {
     JedisOpsUtil jedisOpsUtil;
 
     @Value("${redis.store.db}")
-    Integer db;
+    Integer db = 2;
 
     @Autowired
     ImageCaptchaService imageCaptchaService;
+
+    @Value("${prizeMngDomain}")
+    String prizeMngDomain;
 
 
     @RequestMapping("/login")

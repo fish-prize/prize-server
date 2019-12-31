@@ -1,6 +1,7 @@
 package com.ykm.server.utils;
 
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -43,8 +44,12 @@ public class JedisUtil {
             poolConfig.setTestWhileIdle(true);
             poolConfig.setMaxTotal(100);
 
-
-            JedisPool pool = new JedisPool(poolConfig, hnp.getHost(), hnp.getPort(), 10000, auth, db);
+            JedisPool pool = null;
+            if(StringUtils.isEmpty(auth)){
+                pool = new JedisPool(poolConfig, hnp.getHost(), hnp.getPort(), 10000, null, db);
+            }else {
+                pool = new JedisPool(poolConfig, hnp.getHost(), hnp.getPort(), 10000, auth, db);
+            }
             pools.put(key, pool);
 
             return pool.getResource();

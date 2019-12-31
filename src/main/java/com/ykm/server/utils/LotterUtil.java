@@ -108,10 +108,8 @@ public class LotterUtil {
 
     public static void main(String[] args){
         List<Double> list = new ArrayList<Double>();
-        list.add(20d);
-        list.add(80d);
-        list.add(50d);
-        list.add(30d);
+        list.add(100d);
+        list.add(200d);
         LotterUtil ll = new LotterUtil(list);
         double sumProbability = ll.getMaxElement();
         System.out.println(ll.randomColunmIndex());

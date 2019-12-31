@@ -1,8 +1,7 @@
 package com.ykm.server.service.mng.prize;
 
-import com.ykm.server.daos.mng.prize.PrizeActivityDao;
-import com.ykm.server.entity.mng.prize.PrizeActivityEntity;
-import com.ykm.server.utils.MD5Util;
+import com.ykm.server.daos.mng.prize.UserPrizeListDao;
+import com.ykm.server.entity.mng.prize.UserPrizeListEntity;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -26,29 +25,21 @@ import java.util.Optional;
  * 1.0.0     wenxy     ...
  */
 @Service
-public class PrizeActivityService {
+public class UserPrizeListService {
 
     @Autowired
-    PrizeActivityDao dao;
+    UserPrizeListDao dao;
 
-    public PrizeActivityEntity get(Integer id) {
-        Optional<PrizeActivityEntity> subjectOptional = dao.findById(id);
+    public UserPrizeListEntity get(Integer id){
+        Optional<UserPrizeListEntity> subjectOptional = dao.findById(id);
         if(!subjectOptional.isPresent()){
             return null;
         }
         return subjectOptional.get();
     }
 
-
-    public boolean addOrSave(PrizeActivityEntity object){
+    public boolean addOrSave(UserPrizeListEntity object){
         if(object == null) return false;
-        if(object.getId() != null) {
-            object.setUpdateTime(new Date());
-        }else{
-            object.setCreateTime(new Date());
-            object.setUpdateTime(new Date());
-            object.setAppKey(MD5Util.md5(System.currentTimeMillis()+""));
-        }
         object = dao.save(object);
         return object != null;
     }
@@ -57,23 +48,22 @@ public class PrizeActivityService {
         if(id==null) return false ;
         dao.deleteById(id);
         //级联删除关联表
-
         return true;
     }
 
-    public long count(Integer id, String prizeTitle, Integer status){
-        return dao.count(specification(id ,prizeTitle, status));
+    public long count(Integer prizeId , String deviceId){
+        return dao.count(specification(prizeId, deviceId));
     }
 
-    public List<PrizeActivityEntity> list(Integer id, String prizeTitle, Integer status, Integer page, Integer pageSize){
-        page = page == null ? 1 : page;
-        pageSize = pageSize == null ? 15: pageSize;
+    public List<UserPrizeListEntity> list(Integer prizeId, String deviceId, Integer page, Integer pageSize){
+        page = (page == null || page == 0) ? 1 : page;
+        pageSize = (pageSize == null || pageSize ==0)? 15: pageSize;
 
         Sort sort = new Sort(Sort.Direction.DESC, "id");
         Pageable pageable = PageRequest.of(page-1, pageSize, sort);
 
-        Page<PrizeActivityEntity> pageResult = dao.findAll(
-                specification(id, prizeTitle, status),
+        Page<UserPrizeListEntity> pageResult = dao.findAll(
+                specification(prizeId, deviceId),
                 pageable);
 
         if(pageResult.hasContent()){
@@ -84,17 +74,14 @@ public class PrizeActivityService {
     }
 
 
-    private Specification specification(Integer id, String prizeTitle, Integer status) {
+    private Specification specification(Integer prizeId, String deviceId) {
         Specification specification = (Specification) (root, criteriaQuery, criteriaBuilder) -> {
             List<Predicate> list = new ArrayList<>();
-            if(!StringUtils.isEmpty(prizeTitle)){
-                list.add(criteriaBuilder.like(root.get("prizeTitle"), "%"+prizeTitle+"%"));
+            if(!StringUtils.isEmpty(deviceId)){
+                list.add(criteriaBuilder.equal(root.get("deviceId"), deviceId));
             }
-            if(status!=null){
-                list.add(criteriaBuilder.equal(root.get("status"), status));
-            }
-            if(id!=null){
-                list.add(criteriaBuilder.equal(root.get("id"), id));
+            if(prizeId != null){
+                list.add(criteriaBuilder.equal(root.get("prizeId"), prizeId));
             }
             return criteriaBuilder.and(list.toArray(new Predicate[0]));
         };

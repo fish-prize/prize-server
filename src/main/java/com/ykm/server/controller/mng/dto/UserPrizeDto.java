@@ -12,9 +12,19 @@ import java.util.Date;
  * 版本       开发者     描述
  * 1.0.0     wenxy     ...
  */
-public class PrizeGoodsDto {
+
+public class UserPrizeDto {
 
     private Integer id;
+
+    private boolean exipred;
+    private Integer prizeId;
+
+
+    private String deviceId;
+
+
+    private String prizeTitle;
 
 
     private Integer productId;
@@ -23,28 +33,23 @@ public class PrizeGoodsDto {
     private String productName;
 
 
+    private Integer goodId;
+
+
     private String goodsTitle;
 
 
     private String goodsPic;
 
-    private Integer goodsTotal;
-
     private String targetUrl;
 
 
-    private Integer showRate;
-
-    private Integer count;
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
+    private Date getTime = new Date();
 
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
-    private Date expireTime;
 
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
-    private Date createTime = new Date();
-
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
-    private Date updateTime = new Date();
+    private Date exipreTime = new Date();
 
     public Integer getId() {
         return id;
@@ -52,6 +57,22 @@ public class PrizeGoodsDto {
 
     public void setId(Integer id) {
         this.id = id;
+    }
+
+    public Integer getPrizeId() {
+        return prizeId;
+    }
+
+    public void setPrizeId(Integer prizeId) {
+        this.prizeId = prizeId;
+    }
+
+    public String getPrizeTitle() {
+        return prizeTitle;
+    }
+
+    public void setPrizeTitle(String prizeTitle) {
+        this.prizeTitle = prizeTitle;
     }
 
     public Integer getProductId() {
@@ -70,6 +91,14 @@ public class PrizeGoodsDto {
         this.productName = productName;
     }
 
+    public Integer getGoodId() {
+        return goodId;
+    }
+
+    public void setGoodId(Integer goodId) {
+        this.goodId = goodId;
+    }
+
     public String getGoodsTitle() {
         return goodsTitle;
     }
@@ -86,59 +115,43 @@ public class PrizeGoodsDto {
         this.goodsPic = goodsPic;
     }
 
+    public Date getGetTime() {
+        return getTime;
+    }
+
+    public void setGetTime(Date getTime) {
+        this.getTime = getTime;
+    }
+
+    public Date getExipreTime() {
+        return exipreTime;
+    }
+
+    public void setExipreTime(Date exipreTime) {
+        this.exipreTime = exipreTime;
+    }
+
+    public String getDeviceId() {
+        return deviceId;
+    }
+
+    public void setDeviceId(String deviceId) {
+        this.deviceId = deviceId;
+    }
+
+    public boolean isExipred() {
+        return exipred;
+    }
+
+    public void setExipred(boolean exipred) {
+        this.exipred = exipred;
+    }
+
     public String getTargetUrl() {
         return targetUrl;
     }
 
     public void setTargetUrl(String targetUrl) {
         this.targetUrl = targetUrl;
-    }
-
-    public Integer getShowRate() {
-        return showRate;
-    }
-
-    public void setShowRate(Integer showRate) {
-        this.showRate = showRate;
-    }
-
-    public Date getExpireTime() {
-        return expireTime;
-    }
-
-    public void setExpireTime(Date expireTime) {
-        this.expireTime = expireTime;
-    }
-
-    public Date getCreateTime() {
-        return createTime;
-    }
-
-    public void setCreateTime(Date createTime) {
-        this.createTime = createTime;
-    }
-
-    public Date getUpdateTime() {
-        return updateTime;
-    }
-
-    public void setUpdateTime(Date updateTime) {
-        this.updateTime = updateTime;
-    }
-
-    public Integer getGoodsTotal() {
-        return goodsTotal;
-    }
-
-    public void setGoodsTotal(Integer goodsTotal) {
-        this.goodsTotal = goodsTotal;
-    }
-
-    public Integer getCount() {
-        return count;
-    }
-
-    public void setCount(Integer count) {
-        this.count = count;
     }
 }

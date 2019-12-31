@@ -1,10 +1,13 @@
 var getPrize = new Vue({
     el: "#getPrize",
     data: {
+        storeNone:0,
+        count:0,
         isWeixin: false,
         bigUrl: "",
         payCredite: 200,    //要消耗的积分
         prizeList: [],
+        userPrizeList:[],
         turnplate: {
             restaraunts: [], //大转盘奖品名称
             prizeImg: [], //大转盘奖品的图片
@@ -25,6 +28,7 @@ var getPrize = new Vue({
         goods:{
           id:0,
         },
+        prizeActivityInfo:{},
         prizesInfo: {
             id: 0,
             productName: "",
@@ -114,7 +118,7 @@ var getPrize = new Vue({
                     // 根据获奖不同显示不同的窗口
                     that.showNormalPrize = true
 
-                    $("#winPop").css({"background-image":'url('+that.prizesInfo.winBgImgUrl+')',"background-size":"100% 100%"});
+                    $("#winPop").css({"background-image":'url('+that.prizesInfo.winBgImgUrl+')',"background-size":"100%,100%","background-repeat":"no-repeat"});
                     that.getGoods();
                     // 计算剩余抽奖的次数
                     // that.userCreditsMsg.credits = that.prizesInfo.credites
@@ -336,23 +340,8 @@ var getPrize = new Vue({
 
             }
         },
-        // 获奖记录
-        showPrizeHis: function(){
-            var that = this
-            var deviceId = this.getDeviceId();
-            request(getPriHis,{prizeId: urlTools.getUrlParam("prizeId"), deviceId:deviceId},function(error){
-                console.log(error);
-                return
-            },function(result){
-                if(result && result.code === 1){
-                    that.showHisBox = true
-                    that.prizeThings = result.data.list
-                }
-                console.log(result,'获奖记录')
-            })
-        },
         getDeviceId(){
-            return urlTools.getUrlParam("deviceId") || localStorage.getItem("deviceId");
+            return urlTools.getUrlParam("deviceId") || getCookie("deviceId");
         },
         //跑马灯
         getEPrizeRecord:function(){
@@ -394,6 +383,7 @@ var getPrize = new Vue({
                 console.log(result.data,"抽奖的动作")
                 if(result && result.code === 1){
                     that.prizesInfo =  result.data
+                    that.count = result.data.count
                     console.log('--->', that.prizesInfo)
                     var productName = '',productIdIndex = 0
                     that.prizeList.forEach(function(val,index){
@@ -406,10 +396,27 @@ var getPrize = new Vue({
                     })
                     console.log('productIdIndex=',productIdIndex)
                     that.rotateFn(productIdIndex+1,productName)
+                }else if(result && result.code === 40005){
+                    toast(that, '今天抽奖次数已用完，明天再来吧！', 4);
+                    that.turnplate.bRotate = !that.turnplate.bRotate;
                 }
             })
         },
         // 获取屏幕可视区，赋值给盒子
+
+        getUserPrize: function(){
+            var that = this;
+            request(getUserPrizeList,{prizeId: that.prizeActivityInfo.id},function(error){
+                console.log(error)
+                return
+            },function(result){
+                if(result && result.code === 1){
+                    that.userPrizeList = result.data.content;
+                    that.showHisBox = true
+                    console.log(that.userPrizeList);
+                }
+            })
+        },
         getScreenSize: function(){
             var sw = $(window).width()
             var sh = $(window).height()
@@ -417,12 +424,16 @@ var getPrize = new Vue({
         },
         getGoods: function(){
             var that = this;
-            request(getGoods,{productId: that.prizesInfo.productId},function(error){
+            request(getGoods,{productId: that.prizesInfo.id, prizeId: that.prizeActivityInfo.id},function(error){
                 console.log(error)
                 return
             },function(result){
                 if(result && result.code === 1){
                     that.goods = result.data;
+                    that.count = result.data.count
+                }
+                if(result && result.code === 40004){
+                    that.storeNone = 1;
                 }
             })
         },
@@ -431,53 +442,6 @@ var getPrize = new Vue({
             console.log('goToWardPage', that.goods);
             if(!that.goods.targetUrl) return ;
             window.location.href = that.goods.targetUrl;
-        },
-        // 点击签到显示签到窗口
-        showDraw: function(){
-            this.showMoreInte = false
-            this.showDrawBox = true
-        },
-        // 提交中奖人信息
-        postPrizerInfo: function(){
-            var that = this
-            if(!isMobileNumber(this.prizerInfo.phone)){
-                toast(this,'请输入正确的手机号码！',2)
-                return
-            }
-            console.log(123)
-            if(this.prizerInfo.userName.length === 0||this.prizerInfo.phone.length === 0||this.prizerInfo.address.length === 0){
-                toast(this,'信息不能为空栏！',2)
-                return
-            }
-            request(addPrizeRecordAddress,that.prizerInfo,function(error){
-                return
-            },function(result){
-                console.log(result)
-                if(result && result.code === 1){
-                    that.showInputForm = false
-                    that.showEntity = false
-                    that.subInfo = true
-                    return
-                }else{
-                    toast(that,'网络错误，请稍后再试！',2)
-                    return
-                }
-            })
-        },
-        // 获取用户积分信息
-        getUserCreditsMsg: function(){
-            var that = this
-            request(getUserCreditsMsg,{uid:that.userInfo.id,platform:3},function(error){
-                return
-            },function(result){
-                if(result && result.code === 1){
-                    that.userCreditsMsg = result.data
-                    that.lastChance = Math.floor(that.userCreditsMsg.credits / that.payCredite)
-                }else{
-                    toast(that,'网络错误，请稍后再试！',2)
-                }
-                console.log(result,'获取用户积分信息')
-            })
         },
         // 用户签到的时候
         // 返回上一级
@@ -492,6 +456,32 @@ var getPrize = new Vue({
     created: function () {
         var that = this
         remSet()
+
+        // set cookies
+        if(urlTools.getUrlParam("appKey") && urlTools.getUrlParam("appKey").length > 0) {
+            setCookie("appKey", urlTools.getUrlParam("appKey"), 10);
+        }
+        if(urlTools.getUrlParam("deviceId") && urlTools.getUrlParam("deviceId").length > 0) {
+            setCookie("deviceId", urlTools.getUrlParam("deviceId"), 10)
+        }else{
+            // 新生成deviceId
+            window.location.href= host + '/prize/index'+window.location.search
+        }
+
+        request(getPrizeActivityInfo, {
+            prizeId: urlTools.getUrlParam("prizeId")
+        }, function (error) {
+            console.log('error', error)
+            return
+        }, function (result) {
+            if (result && result.code === 1) {
+                that.prizeActivityInfo = result.data
+                that.count = result.data.count
+                console.log('get getPrizeActivityInfo  -> ', that.prizeActivityInfo)
+            } else {
+                toast(that, result.msg, 2)
+            }
+        })
     },
     mounted: function () {
         var that = this
@@ -505,7 +495,7 @@ var getPrize = new Vue({
         }
         this.getPrizeName(this.drawRouletteWheel)
         // 跑马灯
-        that.getEPrizeRecord()
+        // that.getEPrizeRecord()
         this.getScreenSize()
         // this.getUserCreditsMsg()
         // 设置图片的位置

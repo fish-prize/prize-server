@@ -34,6 +34,8 @@ public class PrizeProductsDto {
 
     private String winBgImgUrl;
 
+    private Integer count;
+
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     private Date createTime = new Date();
 
@@ -118,5 +120,13 @@ public class PrizeProductsDto {
 
     public void setWinBgImgUrl(String winBgImgUrl) {
         this.winBgImgUrl = winBgImgUrl;
+    }
+
+    public Integer getCount() {
+        return count;
+    }
+
+    public void setCount(Integer count) {
+        this.count = count;
     }
 }

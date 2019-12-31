@@ -4,7 +4,11 @@ import org.springframework.util.StringUtils;
 
 public enum MessageCode {
 
-    SYSTEM_ERROR("服务器内部错误", 500);
+    SYSTEM_ERROR("服务器内部错误", 500),
+    PRIZE_ILLEGAL_0("抽奖不存在", 4000),
+    PRIZE_ILLEGAL_1("秘钥不匹配", 4001),
+    PRIZE_ILLEGAL_2("设备ID不存在", 4002),
+    ;
 
     private String msg;
 

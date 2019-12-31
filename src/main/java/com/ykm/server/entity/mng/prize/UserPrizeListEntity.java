@@ -13,11 +13,20 @@ import java.util.Date;
  * 1.0.0     wenxy     ...
  */
 @Entity
-@Table(name="prize_goods")
-public class PrizeGoodsEntity {
+@Table(name="user_prize_list")
+public class UserPrizeListEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
+
+    @Column(name = "prize_id")
+    private Integer prizeId;
+
+    @Column(name = "device_id")
+    private String deviceId;
+
+    @Column(name = "prize_title")
+    private String prizeTitle;
 
     @Column(name = "product_id")
     private Integer productId;
@@ -25,8 +34,12 @@ public class PrizeGoodsEntity {
     @Column(name = "product_name")
     private String productName;
 
+    @Column(name = "goods_id")
+    private Integer goodId;
+
     @Column(name = "goods_title")
     private String goodsTitle;
+
 
     @Column(name = "goods_pic")
     private String goodsPic;
@@ -35,23 +48,13 @@ public class PrizeGoodsEntity {
     private String targetUrl;
 
 
-    @Column(name = "show_rate")
-    private Integer showRate;
-
-    @Column(name = "goods_total")
-    private Integer goodsTotal;
+    @Column(name = "get_time")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
+    private Date getTime = new Date();
 
     @Column(name = "expire_time")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
-    private Date expireTime;
-
-    @Column(name = "create_time")
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
-    private Date createTime = new Date();
-
-    @Column(name = "update_time")
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
-    private Date updateTime = new Date();
+    private Date expireTime = new Date();
 
     public Integer getId() {
         return id;
@@ -59,6 +62,22 @@ public class PrizeGoodsEntity {
 
     public void setId(Integer id) {
         this.id = id;
+    }
+
+    public Integer getPrizeId() {
+        return prizeId;
+    }
+
+    public void setPrizeId(Integer prizeId) {
+        this.prizeId = prizeId;
+    }
+
+    public String getPrizeTitle() {
+        return prizeTitle;
+    }
+
+    public void setPrizeTitle(String prizeTitle) {
+        this.prizeTitle = prizeTitle;
     }
 
     public Integer getProductId() {
@@ -77,6 +96,14 @@ public class PrizeGoodsEntity {
         this.productName = productName;
     }
 
+    public Integer getGoodId() {
+        return goodId;
+    }
+
+    public void setGoodId(Integer goodId) {
+        this.goodId = goodId;
+    }
+
     public String getGoodsTitle() {
         return goodsTitle;
     }
@@ -93,20 +120,12 @@ public class PrizeGoodsEntity {
         this.goodsPic = goodsPic;
     }
 
-    public String getTargetUrl() {
-        return targetUrl;
+    public Date getGetTime() {
+        return getTime;
     }
 
-    public void setTargetUrl(String targetUrl) {
-        this.targetUrl = targetUrl;
-    }
-
-    public Integer getShowRate() {
-        return showRate;
-    }
-
-    public void setShowRate(Integer showRate) {
-        this.showRate = showRate;
+    public void setGetTime(Date getTime) {
+        this.getTime = getTime;
     }
 
     public Date getExpireTime() {
@@ -117,27 +136,19 @@ public class PrizeGoodsEntity {
         this.expireTime = expireTime;
     }
 
-    public Date getCreateTime() {
-        return createTime;
+    public String getDeviceId() {
+        return deviceId;
     }
 
-    public void setCreateTime(Date createTime) {
-        this.createTime = createTime;
+    public void setDeviceId(String deviceId) {
+        this.deviceId = deviceId;
     }
 
-    public Date getUpdateTime() {
-        return updateTime;
+    public String getTargetUrl() {
+        return targetUrl;
     }
 
-    public void setUpdateTime(Date updateTime) {
-        this.updateTime = updateTime;
-    }
-
-    public Integer getGoodsTotal() {
-        return goodsTotal;
-    }
-
-    public void setGoodsTotal(Integer goodsTotal) {
-        this.goodsTotal = goodsTotal;
+    public void setTargetUrl(String targetUrl) {
+        this.targetUrl = targetUrl;
     }
 }

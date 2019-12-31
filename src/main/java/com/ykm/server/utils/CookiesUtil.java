@@ -16,7 +16,7 @@ import javax.servlet.http.Cookie;
 @Component
 public class CookiesUtil {
 
-    @Value("${domain}")
+    @Value("${cookiesDomain}")
     private String domain;
 
     public  String getValue(String key, Cookie[] cookies){
