@@ -236,11 +236,6 @@ main .getMoreChance{
     border-radius: 0.938rem;
     margin: 0 auto;
 }
-
-[v-cloak] {
-    display: none;
-}
-
 .isMoreIntePage{
     position: fixed;
     top: 0;
