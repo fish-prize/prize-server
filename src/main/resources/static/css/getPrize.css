@@ -247,10 +247,28 @@ main .getMoreChance{
     left: 0;
     background-color: rgba(0, 0, 0, 0.6);
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
     align-content: center;
     align-items: center;
     justify-content: center;
+}
+
+.winBgGh{
+    width: 24rem;
+    height: 24rem;
+    background-image: url(http://img.ichenxing.cn/prize/win_bg_gh.png);
+    background-size: 100% auto;
+    background-repeat: no-repeat;
+    animation:winBgGhFrames 10s linear infinite;
+}
+
+@keyframes winBgGhFrames {
+    0% {
+        transform: rotate(0);
+    }
+    100% {
+        transform: rotate(1turn);
+    }
 }
 
 .isMoreInte{
@@ -466,6 +484,7 @@ main .getMoreChance{
 }
 
 .winBox{
+    margin-top: -22rem;
     width: 21rem;
     height: 23rem;
     display: flex;
